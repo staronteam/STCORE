@@ -205,7 +205,7 @@ class npc_teleport : public CreatureScript
                                 player->TeleportTo(1, -893.006775f, -2053.609863f, 82.128624f, 0.395017f);
                                break;
                                
-                          case 54: //Zul'Aman
+                          case 55: //Zul'Aman
                                 player->CLOSE_GOSSIP_MENU();
                                 player->TeleportTo(530, 6852.976562f, -7951.400879f, 170.099167f, 4.774150f);
                                break;
