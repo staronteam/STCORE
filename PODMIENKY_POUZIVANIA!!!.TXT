@@ -1,0 +1,23 @@
+********************************************************************************
+*                                                                              *
+* StaRonTeam.com                                                    Developers *
+*                                                                              *
+********************************************************************************
+*                                                                              *
+*Web: http://staronteam.com/                                                   *
+*Mail: staronteam@gmail.com                                                    *
+*                                                                              *
+*Name: STCORE V1                                                               *
+*Desc: JEDNA SA O JADRO, VYVIJANE Z TRINITYCORE. JE VYVIJANE PRE VLASTNE       *
+*      UCELY A PRISPOSOBUJEME HO SPECIALNE PRE POTREBY SERVERU. JE ODLAHCENE   *
+*      OPROTI POVODNEJ VERZII TRINITYCORE, PRETOZE NEOBSAHUJE TAKU VELKU       *
+*      DATABAZU. OBSAHUJE PRESNE LEN TO CO POTREBUJE REALM. VYVOJ ZACAL        *
+*      DNA 20.2.2011. DATABAZA BOLA VYVIJANA O NIECO SKOR.                     * 
+*Rules: AK CHCETE NIEKDE PUBLIKOVAT TOTO JADRO ALEBO SCRIPTY Z NEHO, TAK       *
+*       UVEDTE PROSIM ZDROJ ODKIAL STE ICH VZALI A UVEDTE ORIGINALNY NAZOV     *
+*       JADRA.                                                                 *
+********************************************************************************
+
+********************************************************************************
+*DAKUJEM VSETKYM ZA PRECITANIE A POCHOPENIE TYCHTO JEDNODUCHYCH PRAVIDIEL      *
+********************************************************************************                                                                             
