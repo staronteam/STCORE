@@ -156,6 +156,13 @@ set(scripts_STAT_SRCS
   Northrend/IcecrownCitadel/boss_blood_prince_council.cpp
   Northrend/IcecrownCitadel/boss_blood_queen_lana_thel.cpp
   Northrend/IcecrownCitadel/boss_sindragosa.cpp
+  Northrend/IcecrownCitadel/icecrown_citadel2.cpp
+  Northrend/IcecrownCitadel/boss_rat_des_blutes.cpp
+  Northrend/IcecrownCitadel/instance_icecrown_citadel2.cpp
+  Northrend/IcecrownCitadel/boss_the_lich_king.cpp
+  Northrend/IcecrownCitadel/boss_valithria_dreamwalker.cpp
+  Northrend/IcecrownCitadel/boss_gunship_battle.cpp
+  Northrend/IcecrownCitadel/icecrown_citadel2.h
   Northrend/zuldrak.cpp
   Northrend/icecrown.cpp
   Northrend/Gundrak/boss_slad_ran.cpp

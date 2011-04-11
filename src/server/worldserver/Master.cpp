@@ -126,15 +126,14 @@ int Master::Run()
     sLog->outString("%s (core-daemon)", _FULLVERSION);
     sLog->outString("<Ctrl-C> to stop.\n");
 
-    sLog->outString(" ______                       __");
-    sLog->outString("/\\__  _\\       __          __/\\ \\__");
-    sLog->outString("\\/_/\\ \\/ _ __ /\\_\\    ___ /\\_\\ \\ ,_\\  __  __");
-    sLog->outString("   \\ \\ \\/\\`'__\\/\\ \\ /' _ `\\/\\ \\ \\ \\/ /\\ \\/\\ \\");
-    sLog->outString("    \\ \\ \\ \\ \\/ \\ \\ \\/\\ \\/\\ \\ \\ \\ \\ \\_\\ \\ \\_\\ \\");
-    sLog->outString("     \\ \\_\\ \\_\\  \\ \\_\\ \\_\\ \\_\\ \\_\\ \\__\\\\/`____ \\");
-    sLog->outString("      \\/_/\\/_/   \\/_/\\/_/\\/_/\\/_/\\/__/ `/___/> \\");
-    sLog->outString("                                 C O R E  /\\___/");
-    sLog->outString("http://TrinityCore.org                    \\/__/\n");
+    sLog->outString("    _____   _______  ______");
+	  sLog->outString("   /    /      /    /     /");
+    sLog->outString("  /   _/      /    /       ");
+	  sLog->outString(" /_____      /    /        ");
+	  sLog->outString("      /     /    /         ");
+	  sLog->outString("/____/     /    /______/   ");
+	  sLog->outString("Remake by: http://wow.staronteam.com/stc/");
+	  sLog->outString("Create of: http://trinitycore.org/");
 
 #ifdef USE_SFMT_FOR_RNG
     sLog->outString("\n");

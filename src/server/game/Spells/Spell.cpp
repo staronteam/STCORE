@@ -5017,6 +5017,12 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if (m_caster->IsInWater())
                         return SPELL_FAILED_ONLY_ABOVEWATER;
                 }
+				        else if (m_spellInfo->Id == 72202) //Blood Link
+				        {
+				            Creature* saurfang = m_caster->FindNearestCreature(37813, 500.0f, true);
+					          if(saurfang && saurfang->isAlive())
+					              saurfang->CastSpell(saurfang, 72195, true);
+				        } 
                 else if (m_spellInfo->SpellIconID == 156)    // Holy Shock
                 {
                     // spell different for friends and enemies
