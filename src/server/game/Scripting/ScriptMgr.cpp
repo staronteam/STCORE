@@ -25,7 +25,6 @@
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
 #include "Transport.h"
-#include "../CityConquest/CityConquestMgr.h"
 
 // Utility macros to refer to the script registry.
 #define SCR_REG_MAP(T) ScriptRegistry<T>::ScriptMap
@@ -181,16 +180,13 @@ void ScriptMgr::Initialize()
     uint32 oldMSTime = getMSTime();
 
     LoadDatabase();
-    
-    sLog->outString("Initializing City Conquest Engine (c) Hkarta");
-    CityConquest.LoadCities();
 
-    sLog->outString("Loading C++ scripts");
+    sLog->outString("Nacitaje sa C++ scripty");
 
     FillSpellSummary();
     AddScripts();
 
-    sLog->outString(">> Loaded %u C++ scripts in %u ms", GetScriptCount(), GetMSTimeDiffToNow(oldMSTime));
+    sLog->outString(">> Nacitane %u C++ scripty za cas %u ms", GetScriptCount(), GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
 }
 

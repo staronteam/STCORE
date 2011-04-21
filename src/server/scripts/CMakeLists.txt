@@ -41,10 +41,6 @@ set(scripts_STAT_SRCS
   ./Custom/Teleporter/teleporter.cpp
   ./Custom/BeastMaster/beastmaster_npc.cpp
   ./Custom/VehicleShoper/vehicle_shoper.cpp
-  ./Custom/CityConquest/city_conquest_boss.cpp
-  ./Custom/CityConquest/city_conquest_generic.cpp
-  ./Custom/CityConquest/city_conquest_portal.cpp
-  ./Custom/CityConquest/city_conquest_spawner.cpp
   ./Custom/HonorChanger/honor_changer.cpp
 )
 

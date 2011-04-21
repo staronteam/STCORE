@@ -24,10 +24,6 @@ void AddSC_npc_morph();
 void AddSC_npc_teleport();
 void AddSC_npc_at_beastmaster();
 void AddSC_npc_engineer();
-void AddSC_city_conquest_boss();
-void AddSC_city_conquest_generic();
-void AddSC_city_conquest_portal();
-void AddSC_city_conquest_spawner();
 void AddSC_npc_honor_changer();
 
 //examples
@@ -1237,10 +1233,6 @@ void AddCustomScripts()
     AddSC_npc_teleport();        //Teleporter
     AddSC_npc_at_beastmaster();  //BeastMaster
     AddSC_npc_engineer();        //VehicleShoper
-    AddSC_city_conquest_boss();
-    AddSC_city_conquest_generic();
-    AddSC_city_conquest_portal();
-    AddSC_city_conquest_spawner();
     AddSC_npc_honor_changer();   //HonorChanger
 
 #endif
