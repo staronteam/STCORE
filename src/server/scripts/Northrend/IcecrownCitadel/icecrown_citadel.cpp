@@ -15,363 +15,248 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ObjectMgr.h"
-#include "ScriptMgr.h"
-#include "ScriptedCreature.h"
-#include "SpellScript.h"
-#include "SpellAuraEffects.h"
+#include "ScriptPCH.h"
 #include "icecrown_citadel.h"
-
-// Weekly quest support
-//* Deprogramming                (DONE)
-//* Securing the Ramparts        (DONE)
-//* Residue Rendezvous           (DONE)
-//* Blood Quickening                    // AreaTrigger 5729 starts the timer, pulling BQ before it runs out means success
-//* Respite for a Tormented Soul
-
-enum Texts
-{
-    // Rotting Frost Giant
-    EMOTE_DEATH_PLAGUE_WARNING  = 0,
-};
+#include "Spell.h"
 
 enum Spells
 {
-    // Rotting Frost Giant
-    SPELL_DEATH_PLAGUE              = 72879,
-    SPELL_DEATH_PLAGUE_AURA         = 72865,
-    SPELL_RECENTLY_INFECTED         = 72884,
-    SPELL_DEATH_PLAGUE_KILL         = 72867,
-    SPELL_STOMP                     = 64652,
-    SPELL_ARCTIC_BREATH             = 72848,
-
-    // Frost Freeze Trap
-    SPELL_COLDFLAME_JETS            = 70460,
-
-    // Alchemist Adrianna
-    SPELL_HARVEST_BLIGHT_SPECIMEN   = 72155,
-    SPELL_HARVEST_BLIGHT_SPECIMEN25 = 72162,
+    SPELL_ON_ORGRIMS_HAMMER_DECK   = 70121, //maybe for gunship battle
+    SPELL_DARKMARTYRDOM_FANATIC     = 71236,
+    SPELL_DARKMARTYRDOM_ADHERENT    = 70903,
+    SPELL_DARKTRANSFORMATION        = 70900,
+    SPELL_NECROTICSTRIKE            = 70659,
+    SPELL_SHADOWCLEAVE              = 70670,
+    SPELL_VAMPIRICMIGHT             = 70674,
+    SPELL_FANATIC_DETERMINATION     = 71235,
+    SPELL_ADHERENT_DETERMINATION    = 71234,
+    SPELL_EMPOWEREMENT              = 70901,
+    SPELL_FROST_FEVER               = 67767,
+    SPELL_DEATHCHILL_BLAST          = 70906,
+    SPELL_DEATHCHILL_BOLT           = 70594,
+    SPELL_CURSE_OF_TORPOR           = 71237,
+    SPELL_SHORUD_OF_THE_OCCULT      = 70768,
+    SPELL_DARK_TRANSFORMATION_T     = 70895,
+    SPELL_DARK_EMPOWERMENT_T        = 70896,
+    SPELL_STANDART_HORDE            = 69811
 };
 
-enum Events
+enum TeleportSpells
 {
-    // Rotting Frost Giant
-    EVENT_DEATH_PLAGUE      = 1,
-    EVENT_STOMP             = 2,
-    EVENT_ARCTIC_BREATH     = 3,
-
-    // Frost Freeze Trap
-    EVENT_ACTIVATE_TRAP     = 4,
+    HAMMER        = 70781,
+    ORATORY       = 70856,
+    RAMPART       = 70857,
+    SAURFANG      = 70858,
+    UPPER_SPIRE   = 70859,
+    PLAGUEWORKS   = 9995,
+    CRIMSONHALL   = 9996,
+    FWHALLS       = 9997,
+    QUEEN         = 70861,
+    LICHKING      = 70860
 };
 
-class npc_rotting_frost_giant : public CreatureScript
+class npc_cult_fanatic_and_adherent : public CreatureScript
 {
     public:
-        npc_rotting_frost_giant() : CreatureScript("npc_rotting_frost_giant") { }
+        npc_cult_fanatic_and_adherent() : CreatureScript("npc_cult_fanatic_and_adherent") { }
 
-        struct npc_rotting_frost_giantAI : public ScriptedAI
+        struct npc_cult_fanatic_and_adherentAI : public ScriptedAI
         {
-            npc_rotting_frost_giantAI(Creature* creature) : ScriptedAI(creature)
-            {
-            }
+            npc_cult_fanatic_and_adherentAI(Creature* creature) : ScriptedAI(creature) { }
 
             void Reset()
             {
-                events.Reset();
-                events.ScheduleEvent(EVENT_DEATH_PLAGUE, 15000);
-                events.ScheduleEvent(EVENT_STOMP, urand(5000, 8000));
-                events.ScheduleEvent(EVENT_ARCTIC_BREATH, urand(10000, 15000));
+                uiStrikeTimer = urand(8000, 11000);
+                uiVampirTimer = urand(19000, 22000);
+                uiCleaveTimer = urand(7000, 9000);
+                uiMartyrdomTimer = urand(24000, 30000);
+                uiFrostFeverTimer = urand(9000, 11000);
+                uiDeathchillTimer = urand(10000, 12000);
+                uiCurseTimer = urand(8000, 10000);
+                uiOccultTimer = urand(25000, 29000);
+
+                bEmpowerement = false;
+
+                if(me->GetEntry() == CREATURE_REANIMATED_ADHERENT)
+                    DoCast(me, SPELL_ADHERENT_DETERMINATION);
+                if(me->GetEntry() == CREATURE_REANIMATED_FANATIC)
+                    DoCast(me, SPELL_FANATIC_DETERMINATION);
             }
 
-            void JustDied(Unit* /*killer*/)
+            void JustDied(Unit* /*who*/) { }
+
+            void SpellHit(Unit* /*caster*/, const SpellEntry * spell)
             {
-                events.Reset();
-            }
-
-            void UpdateAI(const uint32 diff)
-            {
-                if (!UpdateVictim())
-                    return;
-
-                events.Update(diff);
-
-                if (me->HasUnitState(UNIT_STAT_CASTING))
-                    return;
-
-                while (uint32 eventId = events.ExecuteEvent())
+                if(me->GetEntry() == CREATURE_ADHERENT)
                 {
-                    switch (eventId)
+                    if (spell->Id == SPELL_EMPOWEREMENT)
+                        me->UpdateEntry(CREATURE_EMPOWERED_ADHERENT);
+                    else if (spell->Id == SPELL_DARK_EMPOWERMENT_T)
                     {
-                        case EVENT_DEATH_PLAGUE:
-                            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 0.0f, true))
-                            {
-                                Talk(EMOTE_DEATH_PLAGUE_WARNING, target->GetGUID());
-                                DoCast(target, SPELL_DEATH_PLAGUE);
-                            }
-                            events.ScheduleEvent(EVENT_DEATH_PLAGUE, 15000);
-                            break;
-                        case EVENT_STOMP:
-                            DoCastVictim(SPELL_STOMP);
-                            events.ScheduleEvent(EVENT_STOMP, urand(15000, 18000));
-                            break;
-                        case EVENT_ARCTIC_BREATH:
-                            DoCastVictim(SPELL_ARCTIC_BREATH);
-                            events.ScheduleEvent(EVENT_ARCTIC_BREATH, urand(26000, 33000));
-                            break;
-                        default:
-                            break;
+                        DoCast(me, SPELL_EMPOWEREMENT);
+                        bEmpowerement = true;
                     }
+                }
+                if(me->GetEntry() == CREATURE_FANATIC)
+                {
+                    if (spell->Id == SPELL_DARKTRANSFORMATION)
+                        me->UpdateEntry(CREATURE_DEFORMED_FANATIC);
+                    else if (spell->Id == SPELL_DARK_TRANSFORMATION_T)
+                        DoCast(me, SPELL_DARKTRANSFORMATION);
+                }
+            }
+
+            void UpdateAI(const uint32 uiDiff)
+            {
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STAT_CASTING))
+                    return;
+
+                if((me->GetEntry() == CREATURE_ADHERENT) || (me->GetEntry() == CREATURE_EMPOWERED_ADHERENT) || (me->GetEntry() == CREATURE_REANIMATED_ADHERENT))
+                {
+                    if (uiMartyrdomTimer <= uiDiff && !bEmpowerement)
+                    {
+                        DoCast(me, SPELL_DARKMARTYRDOM_ADHERENT);
+                        uiMartyrdomTimer = urand(24000, 30000);
+                    } else uiMartyrdomTimer -= uiDiff;
+
+                    if (uiFrostFeverTimer <= uiDiff)
+                    {
+                        DoCast(me->getVictim(), SPELL_FROST_FEVER);
+                        uiFrostFeverTimer = urand(9000, 11000);
+                    } else uiFrostFeverTimer -= uiDiff;
+
+                    if (uiDeathchillTimer <= uiDiff)
+                    {
+                        if (me->GetEntry() == CREATURE_EMPOWERED_ADHERENT)
+                            DoCast(me->getVictim(), SPELL_DEATHCHILL_BLAST);
+                        else
+                            DoCast(me->getVictim(), SPELL_DEATHCHILL_BOLT);
+                        uiDeathchillTimer = urand(10000, 12000);
+                    } else uiDeathchillTimer -= uiDiff;
+
+                    if (uiCurseTimer <= uiDiff)
+                    {
+                        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                            DoCast(target, SPELL_CURSE_OF_TORPOR);
+                        uiCurseTimer = urand(8000, 10000);
+                    } else uiCurseTimer -= uiDiff;
+
+                    if (uiOccultTimer <= uiDiff)
+                    {
+                        DoCast(me, SPELL_SHORUD_OF_THE_OCCULT);
+                        uiOccultTimer = urand(25000, 29000);
+                    } else uiOccultTimer -= uiDiff;
+                }
+                if((me->GetEntry() == CREATURE_FANATIC) || (me->GetEntry() == CREATURE_REANIMATED_FANATIC) || (me->GetEntry() == CREATURE_DEFORMED_FANATIC))
+                {
+                    if (uiMartyrdomTimer <= uiDiff)
+                    {
+                        DoCast(me, SPELL_DARKMARTYRDOM_FANATIC);
+                        uiMartyrdomTimer = urand(24000, 30000);
+                    } else uiMartyrdomTimer -= uiDiff;
+
+                    if (uiStrikeTimer <= uiDiff)
+                    {
+                        DoCast(me, SPELL_NECROTICSTRIKE);
+                        uiStrikeTimer = urand(8000, 11000);
+                    } else uiStrikeTimer -= uiDiff;
+
+                    if (uiCleaveTimer <= uiDiff)
+                    {
+                        DoCast(me, SPELL_SHADOWCLEAVE);
+                        uiCleaveTimer = urand(7000, 9000);
+                    } else uiCleaveTimer -= uiDiff;
+
+                    if (uiVampirTimer <= uiDiff)
+                    {
+                        DoCast(me, SPELL_VAMPIRICMIGHT);
+                        uiVampirTimer = urand(19000, 22000);
+                    } else uiVampirTimer -= uiDiff;
                 }
 
                 DoMeleeAttackIfReady();
             }
 
         private:
-            EventMap events;
+            uint32 uiStrikeTimer;
+            uint32 uiCleaveTimer;
+            uint32 uiVampirTimer;
+            uint32 uiMartyrdomTimer;
+            uint32 uiFrostFeverTimer;
+            uint32 uiDeathchillTimer;
+            uint32 uiCurseTimer;
+            uint32 uiOccultTimer;
+
+            bool bEmpowerement;
         };
 
         CreatureAI* GetAI(Creature* creature) const
         {
-            return new npc_rotting_frost_giantAI(creature);
+            return new npc_cult_fanatic_and_adherentAI(creature);
         }
 };
 
-class npc_frost_freeze_trap : public CreatureScript
+class go_icecrown_teleporter : public GameObjectScript
 {
     public:
-        npc_frost_freeze_trap() : CreatureScript("npc_frost_freeze_trap") { }
+        go_icecrown_teleporter() : GameObjectScript("go_icecrown_teleporter") { }
 
-        struct npc_frost_freeze_trapAI: public Scripted_NoMovementAI
+        bool OnGossipHello(Player* player, GameObject* go)
         {
-            npc_frost_freeze_trapAI(Creature* creature) : Scripted_NoMovementAI(creature)
+            InstanceScript* instance = go->GetInstanceScript();
+            if(!instance)
+                return false;
+
+            if(instance->GetData(DATA_MARROWGAR_EVENT) == DONE)
             {
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to Light's Hammer.", GOSSIP_SENDER_MAIN, HAMMER);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Oratory of the Damned.", GOSSIP_SENDER_MAIN, ORATORY);
             }
-
-            void DoAction(const int32 action)
+            if(instance->GetData(DATA_DEATHWHISPER_EVENT) == DONE)
             {
-                switch (action)
-                {
-                    case 1000:
-                    case 11000:
-                        events.ScheduleEvent(EVENT_ACTIVATE_TRAP, uint32(action));
-                        break;
-                    case ACTION_STOP_TRAPS:
-                        me->RemoveAurasDueToSpell(SPELL_COLDFLAME_JETS);
-                        events.CancelEvent(EVENT_ACTIVATE_TRAP);
-                        break;
-                    default:
-                        break;
-                }
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Rampart of Skulls.", GOSSIP_SENDER_MAIN, RAMPART);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Deathbringer's Rise.", GOSSIP_SENDER_MAIN, SAURFANG);
             }
+            if(instance->GetData(DATA_SAURFANG_EVENT) == DONE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Upper Spire.", GOSSIP_SENDER_MAIN, UPPER_SPIRE);
+            if(instance->GetData(DATA_PROFESSOR_PUTRICIDE_EVENT) == DONE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Plagueworks", GOSSIP_SENDER_MAIN, PLAGUEWORKS);
+            if(instance->GetData(DATA_BLOOD_QUEEN_LANATHEL_EVENT) == DONE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Crimson Halls", GOSSIP_SENDER_MAIN, CRIMSONHALL);
+            if(instance->GetData(DATA_VALITHRIA_DREAMWALKER_EVENT) == DONE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Sindragosa's Lair", GOSSIP_SENDER_MAIN, QUEEN);
+            if(instance->GetData(DATA_SINDRAGOSA_EVENT) == DONE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport to the Frostwing Halls", GOSSIP_SENDER_MAIN, FWHALLS);
 
-            void UpdateAI(const uint32 diff)
-            {
-                events.Update(diff);
-
-                if (events.ExecuteEvent() == EVENT_ACTIVATE_TRAP)
-                {
-                    DoCast(me, SPELL_COLDFLAME_JETS);
-                    events.ScheduleEvent(EVENT_ACTIVATE_TRAP, 22000);
-                }
-            }
-
-        private:
-            EventMap events;
-        };
-
-        CreatureAI* GetAI(Creature* creature) const
-        {
-            return new npc_frost_freeze_trapAI(creature);
-        }
-};
-
-class npc_alchemist_adrianna : public CreatureScript
-{
-    public:
-        npc_alchemist_adrianna() : CreatureScript("npc_alchemist_adrianna") { }
-
-        bool OnGossipHello(Player* player, Creature* creature)
-        {
-            if (!creature->FindCurrentSpellBySpellId(SPELL_HARVEST_BLIGHT_SPECIMEN) && !creature->FindCurrentSpellBySpellId(SPELL_HARVEST_BLIGHT_SPECIMEN25))
-                if (player->HasAura(SPELL_ORANGE_BLIGHT_RESIDUE) && player->HasAura(SPELL_GREEN_BLIGHT_RESIDUE))
-                    creature->CastSpell(creature, SPELL_HARVEST_BLIGHT_SPECIMEN, false);
-            return false;
-        }
-};
-
-class DeathPlagueTargetSelector
-{
-    public:
-        DeathPlagueTargetSelector(Unit* _caster) : caster(_caster) {}
-
-        bool operator()(Unit* unit)
-        {
-            if (unit == caster)
-                return true;
-
-            if (unit->GetTypeId() != TYPEID_PLAYER)
-                return true;
-
-            if (unit->HasAura(SPELL_RECENTLY_INFECTED) || unit->HasAura(SPELL_DEATH_PLAGUE_AURA))
-                return true;
-
-            return false;
-        }
-
-        Unit* caster;
-};
-
-class spell_frost_giant_death_plague : public SpellScriptLoader
-{
-    public:
-        spell_frost_giant_death_plague() : SpellScriptLoader("spell_frost_giant_death_plague") { }
-
-        class spell_frost_giant_death_plague_SpellScript : public SpellScript
-        {
-            PrepareSpellScript(spell_frost_giant_death_plague_SpellScript);
-
-            bool Load()
-            {
-                failed = false;
-                return true;
-            }
-
-            // First effect
-            void CountTargets(std::list<Unit*>& unitList)
-            {
-                unitList.remove(GetCaster());
-                failed = unitList.empty();
-            }
-
-            // Second effect
-            void FilterTargets(std::list<Unit*>& unitList)
-            {
-                // Select valid targets for jump
-                unitList.remove_if(DeathPlagueTargetSelector(GetCaster()));
-                if (!unitList.empty())
-                {
-                    std::list<Unit*>::iterator itr = unitList.begin();
-                    std::advance(itr, urand(0, unitList.size()-1));
-                    Unit* target = *itr;
-                    unitList.clear();
-                    unitList.push_back(target);
-                }
-
-                unitList.push_back(GetCaster());
-            }
-
-            void HandleScript(SpellEffIndex effIndex)
-            {
-                PreventHitDefaultEffect(effIndex);
-                if (GetHitUnit() != GetCaster())
-                    GetCaster()->CastSpell(GetHitUnit(), SPELL_DEATH_PLAGUE_AURA, true);
-                else if (failed)
-                    GetCaster()->CastSpell(GetCaster(), SPELL_DEATH_PLAGUE_KILL, true);
-            }
-
-            void Register()
-            {
-                OnUnitTargetSelect += SpellUnitTargetFn(spell_frost_giant_death_plague_SpellScript::CountTargets, EFFECT_0, TARGET_UNIT_AREA_ALLY_SRC);
-                OnUnitTargetSelect += SpellUnitTargetFn(spell_frost_giant_death_plague_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_AREA_ALLY_SRC);
-                OnEffect += SpellEffectFn(spell_frost_giant_death_plague_SpellScript::HandleScript, EFFECT_1, SPELL_EFFECT_SCRIPT_EFFECT);
-            }
-
-            bool failed;
-        };
-
-        SpellScript* GetSpellScript() const
-        {
-            return new spell_frost_giant_death_plague_SpellScript();
-        }
-};
-
-class spell_icc_harvest_blight_specimen : public SpellScriptLoader
-{
-    public:
-        spell_icc_harvest_blight_specimen() : SpellScriptLoader("spell_icc_harvest_blight_specimen") { }
-
-        class spell_icc_harvest_blight_specimen_SpellScript : public SpellScript
-        {
-            PrepareSpellScript(spell_icc_harvest_blight_specimen_SpellScript);
-
-            void HandleScript(SpellEffIndex effIndex)
-            {
-                PreventHitDefaultEffect(effIndex);
-                GetHitUnit()->RemoveAurasDueToSpell(uint32(GetEffectValue()));
-            }
-
-            void HandleQuestComplete(SpellEffIndex effIndex)
-            {
-                GetHitUnit()->RemoveAurasDueToSpell(uint32(GetEffectValue()));
-            }
-
-            void Register()
-            {
-                OnEffect += SpellEffectFn(spell_icc_harvest_blight_specimen_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-                OnEffect += SpellEffectFn(spell_icc_harvest_blight_specimen_SpellScript::HandleQuestComplete, EFFECT_1, SPELL_EFFECT_QUEST_COMPLETE);
-            }
-        };
-
-        SpellScript* GetSpellScript() const
-        {
-            return new spell_icc_harvest_blight_specimen_SpellScript();
-        }
-};
-
-class at_icc_saurfang_portal : public AreaTriggerScript
-{
-    public:
-        at_icc_saurfang_portal() : AreaTriggerScript("at_icc_saurfang_portal") { }
-
-        bool OnTrigger(Player* player, AreaTriggerEntry const* /*areaTrigger*/)
-        {
-            InstanceScript* instance = player->GetInstanceScript();
-            if (!instance || instance->GetBossState(DATA_DEATHBRINGER_SAURFANG) != DONE)
-                return true;
-
-            player->TeleportTo(631, 4126.35f, 2769.23f, 350.963f, 0.0f);
-
-            if (instance->GetData(DATA_COLDFLAME_JETS) == NOT_STARTED)
-            {
-                // Process relocation now, to preload the grid and initialize traps
-                player->GetMap()->PlayerRelocation(player, 4126.35f, 2769.23f, 350.963f, 0.0f);
-
-                instance->SetData(DATA_COLDFLAME_JETS, IN_PROGRESS);
-                std::list<Creature*> traps;
-                GetCreatureListWithEntryInGrid(traps, player, NPC_FROST_FREEZE_TRAP, 120.0f);
-                traps.sort(Trinity::ObjectDistanceOrderPred(player));
-                bool instant = false;
-                for (std::list<Creature*>::iterator itr = traps.begin(); itr != traps.end(); ++itr)
-                {
-                    (*itr)->AI()->DoAction(instant ? 1000 : 11000);
-                    instant = !instant;
-                }
-            }
+            player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, go->GetGUID());
             return true;
         }
-};
 
-class at_icc_shutdown_traps : public AreaTriggerScript
-{
-    public:
-        at_icc_shutdown_traps() : AreaTriggerScript("at_icc_shutdown_traps") { }
-
-        bool OnTrigger(Player* player, AreaTriggerEntry const* /*areaTrigger*/)
+        bool OnGossipSelect(Player* player, GameObject* /*go*/, uint32 uiSender, uint32 uiAction)
         {
-            if (InstanceScript* instance = player->GetInstanceScript())
-                if (instance->GetData(DATA_COLDFLAME_JETS) == IN_PROGRESS)
-                    instance->SetData(DATA_COLDFLAME_JETS, DONE);
+            //player->PlayerTalkClass->ClearMenus();
+            if(!player->getAttackers().empty())
+                return false;
+
+            SpellEntry const* spell = sSpellStore.LookupEntry(uiAction);
+            if (!spell)
+                return false;
+
+            if (player->isInCombat())
+            {
+                Spell::SendCastResult(player, spell, 0, SPELL_FAILED_AFFECTING_COMBAT);
+                return true;
+            }
+
+            if (uiSender == GOSSIP_SENDER_MAIN)
+                player->CastSpell(player, spell, true);
+
             return true;
         }
 };
 
 void AddSC_icecrown_citadel()
 {
-    new npc_rotting_frost_giant();
-    new npc_frost_freeze_trap();
-    new npc_alchemist_adrianna();
-    new spell_frost_giant_death_plague();
-    new spell_icc_harvest_blight_specimen();
-    new at_icc_saurfang_portal();
-    new at_icc_shutdown_traps();
+    new npc_cult_fanatic_and_adherent();
+    new go_icecrown_teleporter();
 }

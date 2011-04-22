@@ -19,7 +19,7 @@
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
 #include "SpellAuraEffects.h"
-#include "icecrown_citadel2.h"
+#include "icecrown_citadel.h"
 
 enum eTexts
 {

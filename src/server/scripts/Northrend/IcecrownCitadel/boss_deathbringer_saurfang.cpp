@@ -17,7 +17,7 @@
 */
 
 #include "ScriptPCH.h"
-#include "icecrown_citadel2.h"
+#include "icecrown_citadel.h"
 
 enum Yells
 {
@@ -97,14 +97,14 @@ enum Spells
 
 static const uint32 summonBloodBeast[5] = {72172, 72173, 72356, 72357, 72358};
 
-class boss_saurfang2 : public CreatureScript
+class boss_deathbringer_saurfang : public CreatureScript
 {
     public:
-        boss_saurfang2() : CreatureScript("boss_saurfang2") { }
+        boss_deathbringer_saurfang() : CreatureScript("boss_deathbringer_saurfang") { }
 
-        struct boss_saurfang2AI : public BossAI
+        struct boss_deathbringer_saurfangAI : public BossAI
         {
-            boss_saurfang2AI(Creature* creature) : BossAI(creature, DATA_SAURFANG_EVENT), vehicle(creature->GetVehicleKit())
+            boss_deathbringer_saurfangAI(Creature* creature) : BossAI(creature, DATA_SAURFANG_EVENT), vehicle(creature->GetVehicleKit())
             {
                 instance = me->GetInstanceScript();
                 assert(vehicle);
@@ -276,11 +276,11 @@ class boss_saurfang2 : public CreatureScript
 
         CreatureAI* GetAI(Creature* creature) const
         {
-            return new boss_saurfang2AI(creature);
+            return new boss_deathbringer_saurfangAI(creature);
         }
 };
 
-void AddSC_boss_saurfang2()
+void AddSC_boss_deathbringer_saurfang()
 {
-    new boss_saurfang2();
+    new boss_deathbringer_saurfang();
 }

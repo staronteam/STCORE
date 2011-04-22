@@ -17,5 +17,5 @@
  */
 
 #include "ScriptPCH.h"
-#include "icecrown_citadel2.h"
+#include "icecrown_citadel.h"
 #include "MapManager.h"

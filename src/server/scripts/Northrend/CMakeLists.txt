@@ -143,26 +143,23 @@ set(scripts_STAT_SRCS
   Northrend/VioletHold/boss_xevozz.cpp
   Northrend/VioletHold/boss_erekem.cpp
   Northrend/VioletHold/violet_hold.cpp
-  Northrend/IcecrownCitadel/instance_icecrown_citadel.cpp
-  Northrend/IcecrownCitadel/icecrown_citadel.cpp
-  Northrend/IcecrownCitadel/icecrown_citadel.h
-  Northrend/IcecrownCitadel/icecrown_citadel_teleport.cpp
-  Northrend/IcecrownCitadel/boss_lord_marrowgar.cpp
-  Northrend/IcecrownCitadel/boss_lady_deathwhisper.cpp
-  Northrend/IcecrownCitadel/boss_deathbringer_saurfang.cpp
-  Northrend/IcecrownCitadel/boss_festergut.cpp
-  Northrend/IcecrownCitadel/boss_rotface.cpp
-  Northrend/IcecrownCitadel/boss_professor_putricide.cpp
-  Northrend/IcecrownCitadel/boss_blood_prince_council.cpp
-  Northrend/IcecrownCitadel/boss_blood_queen_lana_thel.cpp
   Northrend/IcecrownCitadel/boss_sindragosa.cpp
-  Northrend/IcecrownCitadel/icecrown_citadel2.cpp
-  Northrend/IcecrownCitadel/boss_rat_des_blutes.cpp
-  Northrend/IcecrownCitadel/instance_icecrown_citadel2.cpp
   Northrend/IcecrownCitadel/boss_the_lich_king.cpp
   Northrend/IcecrownCitadel/boss_valithria_dreamwalker.cpp
+  Northrend/IcecrownCitadel/icecrown_citadel.cpp
+  Northrend/IcecrownCitadel/icecrown_citadel.h
+  Northrend/IcecrownCitadel/instance_icecrown_citadel.cpp
+  Northrend/IcecrownCitadel/boss_deathbringer_saurfang.cpp
+  Northrend/IcecrownCitadel/boss_festergut.cpp
   Northrend/IcecrownCitadel/boss_gunship_battle.cpp
-  Northrend/IcecrownCitadel/icecrown_citadel2.h
+  Northrend/IcecrownCitadel/boss_lady_deathwhisper.cpp
+  Northrend/IcecrownCitadel/boss_lord_marrowgar.cpp
+  Northrend/IcecrownCitadel/boss_professor_putricide.cpp
+  Northrend/IcecrownCitadel/boss_rat_des_blutes.cpp
+  Northrend/IcecrownCitadel/boss_rotface.cpp
+  Northrend/IcecrownCitadel/boss_blood_queen_lana_thel.cpp
+  Northrend/zuldrak.cpp
+  Northrend/icecrown.cpp
   Northrend/zuldrak.cpp
   Northrend/icecrown.cpp
   Northrend/Gundrak/boss_slad_ran.cpp

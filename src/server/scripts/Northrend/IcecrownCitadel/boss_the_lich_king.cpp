@@ -21,7 +21,7 @@
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
 #include "SpellAuraEffects.h"
-#include "icecrown_citadel2.h"
+#include "icecrown_citadel.h"
 
 #define GOSSIP_MENU 10600
 //#define GOSSIP_MENU "Long have I waited for this day, hero. Are you and your allies prepared to bring the Lich King to justice? We charge on your command!"
@@ -721,7 +721,7 @@ class boss_the_lich_king : public CreatureScript
             uint32 uiIcePulsSummonTimer;
             uint32 uiSummonSpiritTimer;
             uint32 uiRandomSpeechTimer;
-            uint64 uiTirionGUID;
+            std::uint64 uiTirionGUID;
 
             SummonList summons;
 
@@ -873,7 +873,7 @@ class npc_tirion_icc : public CreatureScript
             private:
                 InstanceScript* instance;
 
-                uint64 uiLichKingGUID;
+                std::uint64 uiLichKingGUID;
                 uint32 uiIntroTimer;
                 uint8 uiStage;
                 bool bIntro;
