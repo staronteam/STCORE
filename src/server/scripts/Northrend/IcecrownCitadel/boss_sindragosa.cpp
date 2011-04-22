@@ -611,7 +611,7 @@ class spell_sindragosa_mystic_buffet : public SpellScriptLoader
         }
 };
 
-class spell_sindragosa_unchained_magic : public SpellScriptLoader
+/* class spell_sindragosa_unchained_magic : public SpellScriptLoader
 {
     public:
         spell_sindragosa_unchained_magic() : SpellScriptLoader("spell_sindragosa_unchained_magic") { } //69766
@@ -621,7 +621,7 @@ class spell_sindragosa_unchained_magic : public SpellScriptLoader
         {
             PrepareAuraScript(spell_sindragosa_unchained_magic_AuraScript)
 
-            void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+            void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes)
             {
                 int32 damage = (GetBase()->GetStackAmount() * 2000);
                 GetTarget()->CastCustomSpell(71044, SPELLVALUE_BASE_POINT0, damage, GetTarget(), true, NULL, aurEff, GetCasterGUID());
@@ -637,7 +637,7 @@ class spell_sindragosa_unchained_magic : public SpellScriptLoader
         {
             return new spell_sindragosa_unchained_magic_AuraScript();
         }
-};
+}; */
 
 class spell_sindragosa_ice_tomb_effect : public SpellScriptLoader
 {
@@ -709,7 +709,7 @@ void AddSC_boss_sindragosa()
     new npc_ice_tomb();
     new spell_sindragosa_ice_tomb();
     new spell_sindragosa_mystic_buffet(); //for achievement
-    new spell_sindragosa_unchained_magic();
+    //new spell_sindragosa_unchained_magic();
     new spell_sindragosa_ice_tomb_effect();
     new spell_sindragosa_blistering_cold();
 }

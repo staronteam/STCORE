@@ -721,7 +721,7 @@ class boss_the_lich_king : public CreatureScript
             uint32 uiIcePulsSummonTimer;
             uint32 uiSummonSpiritTimer;
             uint32 uiRandomSpeechTimer;
-            std::uint64 uiTirionGUID;
+            uint64 uiTirionGUID;
 
             SummonList summons;
 
@@ -873,7 +873,7 @@ class npc_tirion_icc : public CreatureScript
             private:
                 InstanceScript* instance;
 
-                std::uint64 uiLichKingGUID;
+                uint64 uiLichKingGUID;
                 uint32 uiIntroTimer;
                 uint8 uiStage;
                 bool bIntro;
