@@ -649,7 +649,7 @@ class spell_sindragosa_ice_tomb_effect : public SpellScriptLoader
         {
             PrepareSpellScript(spell_sindragosa_ice_tomb_effect_SpellScript);
 
-            void HandleScript(SpellEffIndex /*effIndex*/)
+            void HandleScript(SpellEffIndex)
             {
                 if (!(GetHitUnit() && GetHitUnit()->isAlive()))
                     return;
@@ -668,12 +668,12 @@ class spell_sindragosa_ice_tomb_effect : public SpellScriptLoader
         {
             return new spell_sindragosa_ice_tomb_effect_SpellScript();
         }
-};
+}; 
 
 class spell_sindragosa_blistering_cold : public SpellScriptLoader
 {
     public:
-        spell_sindragosa_blistering_cold() : SpellScriptLoader("spell_sindragosa_ice_tomb_effect") { }
+        spell_sindragosa_blistering_cold() : SpellScriptLoader("spell_sindragosa_blistering_cold") { }
 
 
         class spell_sindragosa_blistering_cold_SpellScript : public SpellScript
